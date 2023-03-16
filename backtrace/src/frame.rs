@@ -311,7 +311,8 @@ impl Frame {
                     fmt_helper(f, subframe, is_last, &next, true)?;
                 }
             } else {
-                writeln!(&mut f, "{prefix}└┈ [POLLING]")?;
+                writeln!(&mut f)?;
+                write!(&mut f, "{prefix}└┈ [POLLING]")?;
             }
 
             Ok(())
