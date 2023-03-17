@@ -98,6 +98,7 @@ pub(crate) mod tasks;
 
 pub(crate) use frame::Frame;
 pub(crate) use framed::Framed;
+use itertools::Itertools;
 pub use location::Location;
 pub(crate) use tasks::tasks;
 
@@ -165,7 +166,17 @@ macro_rules! frame {
 /// become idle.
 pub fn taskdump_tree(wait_for_running_tasks: bool) -> String {
     itertools::join(
-        tasks().map(|task| task.dump_tree(wait_for_running_tasks)),
+        tasks()
+            .map(|task| task.dump_tree(wait_for_running_tasks))
+            .sorted()
+            .dedup_with_count()
+            .map(|(count, dump)| {
+                if count == 1 {
+                    dump
+                } else {
+                    format!("{count} identical tasks:\n{dump}")
+                }
+            }),
         "\n",
     )
 }
